@@ -2,7 +2,11 @@
 title: "Level Up Your Docs"
 format: revealjs
 author: Jacki Buros
-company: Generable
+institute: Generable Inc
+standalone: true
+execute:
+  echo: false
+  warning: false
 ---
 
 ## Our goals {background="#43464B"}
@@ -35,7 +39,7 @@ How many of you routinely:
 3.  Use `testthat` or another testing framework?
 :::
 
-## The plan
+## Plan for today
 
 0. Best practices
 1. Quick wins
@@ -46,9 +50,11 @@ How many of you routinely:
 
 ## Render on GH
 
-This only works on github; there are similar capabilities on other tools (gitlab, etc)
+This only works on github.
 
 1. Create a new folder: `mkdir -p .github/workflows`
 2. Create a new file: `render-docs.yml`
+
+## Try it
 
 
