@@ -1,0 +1,54 @@
+---
+title: "Level Up Your Docs"
+format: revealjs
+author: Jacki Buros
+company: Generable
+---
+
+## Our goals {background="#43464B"}
+
+1. Reliable, readable code
+2. Nice UI (clean)
+3. Clear messaging
+4. Wow factor
+5. Easy to update with new data
+
+## However {.incremental}
+
+Things don't always go as planned ...
+
+. . .
+
+![](images/malvestida-FfbVFLAVscw-unsplash.jpg)
+
+::: {.footer}
+Photo by [Malvestida](https://unsplash.com/@malvestida?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) on [Unsplash](https://unsplash.com/photos/person-holding-red-and-beige-twin-bell-analog-alarm-clock-FfbVFLAVscw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash)
+:::
+
+## Poll
+
+How many of you routinely:
+
+::: incremental
+1.  Use `git` or another version control system?
+2.  Use `quarto` or `Rmarkdown`?
+3.  Use `testthat` or another testing framework?
+:::
+
+## The plan
+
+0. Best practices
+1. Quick wins
+2. Eye candy
+3. Other
+
+# Best practices
+
+## Render on GH
+
+This only works on github; there are similar capabilities on other tools (gitlab, etc)
+
+1. Create a new folder: `mkdir -p .github/workflows`
+2. Create a new file: `render-docs.yml`
+
+
