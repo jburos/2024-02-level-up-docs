@@ -41,19 +41,19 @@ How many of you routinely:
 
 ## Plan for today
 
-0. Best practices
+0. Table stakes
 1. Quick wins
 2. Eye candy
 3. Other
 
-# Best practices
+# Table stakes
 
-## Render on GH
+## Does the doc render?
 
-This only works on github.
+1. Render it locally
+2. Render on push to github?
 
-1. Create a new folder: `mkdir -p .github/workflows`
-2. Create a new file: `render-docs.yml`
+Demo: `https://github.com/jburos/2024-02-level-up-docs`
 
 ## Try it
 
