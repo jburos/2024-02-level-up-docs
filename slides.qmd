@@ -22,7 +22,7 @@ if (!require(pak)) {
   install.packages('pak')
   library(pak)
 }
-pak::pkg_install(c('tidyverse', 'gtsummary', 'palmerpenguins', 
+pak::pkg_install(c('dplyr', 'ggplot2', 'forcats', 'gtsummary', 'palmerpenguins', 
                    'sparkline', 'plotly', 'gt', 'gtExtras', 'Hmisc',
                    'svglite', 'ggridges'), 
                  dependencies = T, ask = F, upgrade = T)
@@ -118,7 +118,7 @@ See more info [here](https://github.com/quarto-dev/quarto-actions/tree/main/rend
 ## stopifnot
 
 ```r
-library(tidyverse)
+library(dplyr)
 library(gt)
 
 # load data
@@ -159,7 +159,7 @@ Invest time improving tasks you do often!
 ```{r}
 #| code-fold: true
 #| echo: true
-library(tidyverse)
+library(dplyr)
 library(gtsummary)
 data("rx_adsl", package = 'gt')
 set_gtsummary_theme(theme_gtsummary_compact())
@@ -219,6 +219,7 @@ print(des, 'categorical')
 #| width: 100%
 library(palmerpenguins)
 library(plotly)
+library(ggplot2)
 data(penguins, package = 'palmerpenguins')
 p <- ggplot(penguins,
             aes(x = bill_length_mm, y = body_mass_g, 
@@ -302,7 +303,7 @@ This is an example table where we show the %efficacy for a treatment both numeri
 ```{r}
 #| echo: true
 #| code-fold: true
-library(tidyverse)
+library(forcats)
 library(ggridges)
 mtcars |>
   mutate(cylinders = factor(cyl),
