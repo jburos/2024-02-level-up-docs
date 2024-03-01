@@ -5,6 +5,8 @@ on:
   pull_request:
     branches:
       - main
+    types:
+      - labeled
 
 name: Render Docs
 
