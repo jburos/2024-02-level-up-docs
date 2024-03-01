@@ -24,7 +24,8 @@ if (!require(pak)) {
 }
 pak::pkg_install(c('tidyverse', 'gtsummary', 'palmerpenguins', 
                    'sparkline', 'plotly', 'gt', 'gtExtras', 'Hmisc',
-                   'svglite', 'ggridges'), ask = F, upgrade = T)
+                   'svglite', 'ggridges'), 
+                 dependencies = T, ask = F, upgrade = T)
 ```
 
 ## Our goals {background="#43464B"}
