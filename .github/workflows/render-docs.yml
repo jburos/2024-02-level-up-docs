@@ -2,11 +2,15 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    types: [review_requested]
+    branches:
+      - main
 
 name: Render Docs
 
 jobs:
-  build-deploy:
+  build-render:
     runs-on: ubuntu-latest
     
     steps:
@@ -30,5 +34,3 @@ jobs:
 
       - name: Render Quarto Project
         uses: quarto-dev/quarto-actions/render@v2
-          # to: html
-          # path: . # can be a directory or file
