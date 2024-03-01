@@ -1,6 +1,11 @@
 ---
 title: "Level Up Your Docs"
-format: revealjs
+format: 
+  revealjs:
+    smaller: true
+    scrollable: false
+    self-contained: true
+    fig-responsive: false
 author: Jacki Buros
 institute: Generable Inc
 standalone: true
@@ -8,6 +13,20 @@ execute:
   echo: false
   warning: false
 ---
+
+```{r}
+#| label: setup
+#| echo: false
+#| include: false
+if (!require(pak)) {
+  install.packages('pak')
+  library(pak)
+}
+pak::pkg_install(c('tidyverse', 'gtsummary', 'palmerpenguins', 
+                   'sparkline', 'plotly', 'gt', 'gtExtras', 'Hmisc',
+                   'svglite', 'ggridges'), 
+                 dependencies = T, ask = F, upgrade = T)
+```
 
 ## Our goals {background="#43464B"}
 
@@ -50,11 +69,253 @@ How many of you routinely:
 
 ## Does the doc render?
 
-1. Render it locally
-2. Render on push to github?
+. . .
 
-Demo: `https://github.com/jburos/2024-02-level-up-docs`
+![](images/celebration.jpg)
+
+::: {.footer}
+Photo by [rovenimages.com](https://www.pexels.com/photo/low-angle-photo-of-fireworks-949592/)
+:::
+
+## Will it render again?
+
+. . .
+
+Demo: [jburos/2024-02-level-up-docs](https://github.com/jburos/2024-02-level-up-docs)
 
 ## Try it
 
+1. Create `.github/workflows` directory
+
+```sh
+mkdir -p .github/workflows
+```
+
+. . .
+
+2. Copy [this](https://github.com/jburos/2024-02-level-up-docs/blob/main/.github/workflows/render-docs.yml) yaml file into that directory
+
+```yaml
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+      - name: Render Quarto Project
+        uses: quarto-dev/quarto-actions/render@v2
+```
+
+::: {.footer}
+See more info [here](https://github.com/quarto-dev/quarto-actions/tree/main/render). 
+:::
+
+## stopifnot
+
+```r
+library(tidyverse)
+library(gt)
+
+# load data
+data(sp500)
+
+# do some work
+us_spending <- read_xls(here::here('data', 'hist01z1_fy2024.xlsx'))
+d <- sp500 |>
+  mutate(year = year(date)) |>
+  left_join(us_spending, by = 'year')
+
+# check!
+stopifnot(nrow(sp500) == nrow(d)) # <1>
+```
+1. Check if your number of records has changed!
+
+::: {.footer}
+data source: https://www.whitehouse.gov/omb/budget/historical-tables/
+:::
+
+## Other considerations
+
+- Use [here](https://here.r-lib.org/) (or Rprojroot)
+- Use [renv](https://rstudio.github.io/renv/articles/renv.html) (or groundhog)
+- or [pak](https://pak.r-lib.org/)
+
+# Quick wins
+
+## Summarize data
+
+- gtsummary
+- another option: table1
+
+Invest time improving tasks you do often!
+
+## gtsummary
+
+```{r}
+#| code-fold: true
+#| echo: true
+library(tidyverse)
+library(gtsummary)
+data("rx_adsl", package = 'gt')
+set_gtsummary_theme(theme_gtsummary_compact())
+rx_adsl |> 
+  select(-starts_with('STUDY'), 
+         -USUBJID, -TRTAN, 
+         -SCRFREAS) |>
+  gtsummary::tbl_summary(by = TRTA)
+```
+
+
+## describe
+
+```{r}
+#| code-fold: true
+#| echo: true
+data("sp500", package = 'gt')
+library(Hmisc)
+library(sparkline)
+des <- describe(sp500)
+print(des, 'continuous')
+```
+
+## describe
+
+::: {.panel-tabset}
+
+### Continuous
+
+```{r}
+library(Hmisc)
+library(sparkline)
+des <- describe(rx_adsl)
+print(des, 'continuous')
+```
+
+### Categorical
+
+```{r}
+library(Hmisc)
+library(sparkline)
+des <- rx_adsl |>
+  select(-starts_with('STUDY'), 
+         -USUBJID, -TRTAN, 
+         -SCRFREAS) |>
+  describe('rx_adsl')
+print(des, 'categorical')
+```
+
+:::
+
+# Eye Candy
+
+## ggplotly
+
+```{r}
+#| width: 100%
+library(palmerpenguins)
+library(plotly)
+data(penguins, package = 'palmerpenguins')
+p <- ggplot(penguins,
+            aes(x = bill_length_mm, y = body_mass_g, 
+                colour = species)) +
+  geom_point() +
+  theme_minimal() +
+  scale_x_continuous('Bill Length (mm)') +
+  scale_y_continuous('Body Mass (g)')
+ggplotly(p)
+```
+
+## ggplotly
+
+```r
+library(palmerpenguins)
+library(plotly)
+data(penguins, package = 'palmerpenguins')
+p <- ggplot(penguins,
+            aes(x = bill_length_mm, y = body_mass_g, 
+                colour = species)) +
+  geom_point() +
+  theme_minimal() +
+  scale_x_continuous('Bill Length (mm)') +
+  scale_y_continuous('Body Mass (g)')
+ggplotly(p)
+```
+
+## gt & gtExtras
+
+Use: `gtExtras::gt_plt_dist` to add a density plot to a table
+```{r}
+#| echo: true
+#| code-fold: true
+library(gt)
+library(gtExtras)
+library(svglite)
+car_summary <- mtcars %>%
+  dplyr::group_by(cyl) %>%
+  dplyr::summarize(
+    mean = mean(mpg),
+    sd = sd(mpg),
+    # must end up with list of data for each row in the input dataframe
+    mpg_data = list(mpg),
+    .groups = "drop"
+  )
+car_summary %>%
+  arrange(desc(cyl)) %>% 
+  gt() %>%
+  gtExtras::gt_plt_dist(
+    mpg_data, 
+    type = "density", 
+    line_color = "blue", 
+    fill_color = "red") %>%
+  fmt_number(columns = mean:sd, decimals = 1)
+```
+
+## gt & gtExtras
+
+Or, using a percent bar: `gt_plt_bar_pct`
+
+```{r}
+#| echo: true
+#| code-fold: true
+mtcars %>%
+   head() %>%
+   dplyr::select(cyl, mpg) %>%
+   dplyr::mutate(mpg_pct_max = round(mpg/max(mpg) * 100, digits = 2),
+                 mpg_scaled = mpg/max(mpg) * 100) %>%
+   gt() %>%
+   gt_plt_bar_pct(column = mpg_scaled, scaled = TRUE)
+```
+
+## example
+
+This is an example table where we show the %efficacy for a treatment both numerically & graphically
+
+![](images/example-table.png)
+
+## ggridges
+
+```{r}
+#| echo: true
+#| code-fold: true
+library(tidyverse)
+library(ggridges)
+mtcars |>
+  mutate(cylinders = factor(cyl),
+         cylinders = fct_reorder(cylinders, cyl)) |>
+  ggplot(aes(x = mpg, y = cylinders, group = cylinders,
+             colour = cylinders, fill = cylinders)) +
+    ggridges::geom_density_ridges(alpha = 0.3) +
+  theme_minimal()
+```
+
+# In summary
+
+- Code defensively
+- Start good habits now
+- Learning tools pays dividends
 
